@@ -6,14 +6,16 @@ def collect_names(root):
     """Collect all names and mark if they are WIP."""
     names = {}
     for enum in root.findall(".//enum"):
-        names[enum.get("name")] = enum.find("wip") is not None
+        enum_name = enum.get("name")
+        names[enum_name] = enum.find("wip") is not None
         for entry in enum.findall("entry"):
-            names[entry.get("name")] = entry.find("wip") is not None
+            names[f'{enum_name}.{entry.get("name")}'] = entry.find("wip") is not None
     for msg in root.findall(".//message"):
         is_wip = msg.find("wip") is not None
-        names[msg.get("name")] = is_wip
+        message_name = msg.get("name")
+        names[message_name] = is_wip
         for field in msg.findall("field"):
-            names[field.get("name")] = is_wip or field.find("wip") is not None
+            names[f'{message_name}.{field.get("name")}'] = is_wip or field.find("wip") is not None
     return names
 
 def get_base_commit():
